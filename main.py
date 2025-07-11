@@ -1,46 +1,56 @@
 import dspy
 import os
 import requests
-import json # Import json to pretty-print the output
+import json
 
-# --- Configuration (remains the same) ---
+# We only need the profile we want to scrape now.
+# This can be set from an environment variable for good practice.
+PROFILE_TO_SCRAPE = os.getenv("PROFILE_TO_SCRAPE")
+# Add a check to ensure the variable was actually found
+if not PROFILE_TO_SCRAPE:
+    raise ValueError("ERROR: The PROFILE_TO_SCRAPE environment variable is not set. Please define it before running.")
+
+# Configuration (remains the same)
 anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
-
 if not anthropic_api_key:
-    raise ValueError("ANTHROPIC_API_KEY environment variable not found. Please set it before running.")
-
-llm = dspy.LM(
-    "anthropic/claude-3-haiku-20240307",
-    api_key=anthropic_api_key
-)
-
+    raise ValueError("ANTHROPIC_API_KEY environment variable not found.")
+llm = dspy.LM("anthropic/claude-3-haiku-20240307", api_key=anthropic_api_key)
 dspy.configure(lm=llm)
 
 
-# --- Call our NEW Scraper Tool ---
-print("--- Step 1: Calling the LinkedIn Scraper Tool ---")
+# --- Call our new Authenticated Scraper Tool ---
+print("--- Step 1: Calling the Authenticated LinkedIn Scraper Tool ---")
+
 try:
-    # We now send a POST request to the new endpoint
-    # We also send a "payload" with the URL we want to scrape
-    scraper_payload = {"linkedin_url": "https://www.linkedin.com/in/janedoe-example"}
-    response = requests.post("http://127.0.0.1:8000/tools/scrape_linkedin", json=scraper_payload)
+    # The payload is now much simpler
+    scraper_payload = {"linkedin_url": PROFILE_TO_SCRAPE}
+    print("Sending request to MCP Server... (A browser window should open)")
+    response = requests.post("http://127.0.0.1:8000/tools/scrape_linkedin", json=scraper_payload, timeout=300)
     response.raise_for_status()
-    
-    # The server returns the profile data, which we store in a variable
     scraped_data = response.json()
     
-    print("Successfully received profile data from MCP Server:")
-    # Use json.dumps to print the dictionary in a nicely formatted way
+    print("Successfully received REAL profile data from MCP Server:")
     print(json.dumps(scraped_data, indent=2))
 
-
 except requests.exceptions.RequestException as e:
-    print(f"\n---!!! FAILED TO CONNECT TO MCP SERVER !!! ---")
-    print("Please ensure your mcp_server.py is running in a separate terminal.")
+    print(f"\n---!!! FAILED TO CONNECT OR SCRAPE !!! ---")
     print(f"Error details: {e}\n")
     exit()
 
-# --- For now, we'll stop here. The DSPy part will come next. ---
-print("\n--- Next Step: Process this data with DSPy ---")
 
-# (We will add the DSPy logic to parse this data in our next step)
+# --- Step 2: Processing the REAL Scraped Data with DSPy ---
+print("\n--- Step 2: Processing Scraped Experience with DSPy ---")
+
+class ProcessExperience(dspy.Signature):
+    """Given a raw job description, rewrite it as a single, powerful resume bullet point."""
+    raw_description = dspy.InputField()
+    resume_bullet_point = dspy.OutputField()
+
+resume_processor = dspy.Predict(ProcessExperience)
+
+for job in scraped_data.get("experience", []):
+    raw_desc = job.get("description")
+    prediction = resume_processor(raw_description=raw_desc)
+    
+    print(f"\nOriginal Description: {raw_desc}")
+    print(f"AI-Generated Bullet Point: {prediction.resume_bullet_point}")

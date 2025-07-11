@@ -1,48 +1,67 @@
 from fastapi import FastAPI
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+# CORRECTED IMPORT: We are importing the class named 'Service'
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 
-app = FastAPI(
-    title="Gom-Jobbar MCP Server",
-    description="A server hosting specialized tools like scrapers and matchers.",
-    version="0.1.0"
-)
+# --- IMPORTANT: PASTE YOUR CHROME PROFILE PATH HERE ---
+#CHROME_PROFILE_PATH = "$HOME/snap/chromium/common/chromium/Default"
+CHROME_PROFILE_PATH = "/home/mark/snap/chromium/common/chromium/Default"
+app = FastAPI(title="Gom-Jobbar MCP Server")
 
-# This is our old root endpoint, good for checking if the server is alive.
-@app.get("/")
-def read_root():
-    return {"message": "Gom-Jobbar MCP Server is running!"}
+def get_profile_data(driver, profile_url):
+    """Extracts data from a loaded LinkedIn profile page."""
+    print(f"Navigating to profile: {profile_url}")
+    driver.get(profile_url)
+    time.sleep(4)
 
+    try:
+        name_element = driver.find_element(By.TAG_NAME, "h1")
+        name = name_element.text
+    except Exception as e:
+        name = "Could not find name"
+        print(f"Error scraping name: {e}")
 
-# --- NEW: Our First Real Tool Endpoint ---
-@app.post("/tools/scrape_linkedin")
-def scrape_linkedin_profile(payload: dict):
-    """
-    SIMULATED: In the future, this endpoint will take a LinkedIn URL,
-    launch the scraper, and return the real data. For now, it
-    returns a hardcoded, mock profile.
-    """
-    linkedin_url = payload.get("linkedin_url")
-    print(f"Received request to scrape: {linkedin_url}")
-
-    # This is our mock data, pretending to be a real scrape result.
-    mock_profile_data = {
-        "fullName": "Jane Doe",
-        "summary": "Experienced software engineer with 8+ years in cloud-native application development, specializing in Python and Go.",
+    return {
+        "fullName": name,
+        "scrapedFrom": profile_url,
+        "summary": "This is a placeholder summary. A full scraper would extract the real one.",
         "experience": [
             {
-                "title": "Senior Cloud Engineer",
-                "company": "TechCorp Inc.",
-                "duration": "Jan 2022 - Present",
-                "description": "Led the migration of monolithic services to a microservices architecture on AWS. Developed CI/CD pipelines that reduced deployment time by 40%."
-            },
-            {
-                "title": "Software Engineer",
-                "company": "DataSolutions LLC",
-                "duration": "Jun 2018 - Dec 2021",
-                "description": "Built and maintained data processing applications using Python and Apache Spark. Implemented new features based on stakeholder requirements."
+                "title": "Real Scrape Successful",
+                "company": "Gom-Jobbar App",
+                "duration": "Just now",
+                "description": f"Successfully launched authenticated browser and scraped the name '{name}'."
             }
-        ],
-        "skills": ["Python", "Go", "AWS", "Kubernetes", "Docker", "Terraform"]
+        ]
     }
 
-    print("Returning mock profile data.")
-    return mock_profile_data
+@app.post("/tools/scrape_linkedin")
+def scrape_linkedin_profile_real(payload: dict):
+    """
+    REAL SCRAPER v2: Uses an existing Chrome profile to bypass login/MFA.
+    """
+    profile_url = payload.get("linkedin_url")
+    if not profile_url:
+        return {"error": "Missing profile_url in payload."}
+
+    print("Initializing WebDriver with existing user profile...")
+    options = ChromeOptions()
+    options.add_argument(f"--user-data-dir={CHROME_PROFILE_PATH}")
+    options.add_argument("--profile-directory=Default") 
+    
+    # CORRECTED USAGE: We now use 'Service' directly.
+    service = Service(executable_path='./chromedriver')
+    driver = webdriver.Chrome(service=service, options=options)
+
+    try:
+        profile_data = get_profile_data(driver, profile_url)
+        return profile_data
+    except Exception as e:
+        print(f"An error occurred during scraping: {e}")
+        return {"error": "Failed to scrape LinkedIn."}
+    finally:
+        print("Closing WebDriver.")
+        driver.quit()
