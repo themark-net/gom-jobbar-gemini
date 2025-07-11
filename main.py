@@ -1,8 +1,9 @@
 import dspy
 import os
-import requests # Import the new library
+import requests
+import json # Import json to pretty-print the output
 
-# --- Configuration ---
+# --- Configuration (remains the same) ---
 anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
 
 if not anthropic_api_key:
@@ -16,39 +17,30 @@ llm = dspy.LM(
 dspy.configure(lm=llm)
 
 
-# --- NEW: Call our MCP Server ---
-print("Attempting to connect to the MCP Server...")
+# --- Call our NEW Scraper Tool ---
+print("--- Step 1: Calling the LinkedIn Scraper Tool ---")
 try:
-    # This line sends a GET request to our running server
-    response = requests.get("http://127.0.0.1:8000/")
-    response.raise_for_status() # This will raise an error if the server returned an error code
+    # We now send a POST request to the new endpoint
+    # We also send a "payload" with the URL we want to scrape
+    scraper_payload = {"linkedin_url": "https://www.linkedin.com/in/janedoe-example"}
+    response = requests.post("http://127.0.0.1:8000/tools/scrape_linkedin", json=scraper_payload)
+    response.raise_for_status()
+    
+    # The server returns the profile data, which we store in a variable
+    scraped_data = response.json()
+    
+    print("Successfully received profile data from MCP Server:")
+    # Use json.dumps to print the dictionary in a nicely formatted way
+    print(json.dumps(scraped_data, indent=2))
 
-    server_message = response.json().get("message")
-    print(f"Successfully connected to MCP Server. Message: '{server_message}'")
 
 except requests.exceptions.RequestException as e:
     print(f"\n---!!! FAILED TO CONNECT TO MCP SERVER !!! ---")
     print("Please ensure your mcp_server.py is running in a separate terminal.")
     print(f"Error details: {e}\n")
-    # We can exit here since it can't connect
     exit()
 
+# --- For now, we'll stop here. The DSPy part will come next. ---
+print("\n--- Next Step: Process this data with DSPy ---")
 
-# --- Define the "Signature" ---
-class BasicQA(dspy.Signature):
-    """Answer questions with short, concise answers."""
-    question = dspy.InputField()
-    answer = dspy.OutputField(desc="A short, factual answer.")
-
-
-# --- Define the DSPy Module ---
-generate_answer = dspy.Predict(BasicQA)
-
-
-# --- Execute the Program ---
-print("\nNow, asking the LLM a question...")
-question_to_ask = "What is the primary function of a CPU in a computer?"
-prediction = generate_answer(question=question_to_ask)
-
-print(f"Question: {question_to_ask}")
-print(f"Answer: {prediction.answer}")
+# (We will add the DSPy logic to parse this data in our next step)
