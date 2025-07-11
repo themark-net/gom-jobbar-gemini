@@ -1,0 +1,79 @@
+Project: gom-jobbar - Final Architecture Summary
+Objective: To create an intelligent, end-to-end application that assists users in defining their experience, finding relevant jobs, creating tailored resumes, automating applications, and preparing for interviews, with a focus on successfully navigating automated HR filters.
+
+Core Technologies & Philosophies
+Intelligence Layer: DSPy is used as the core framework for "programming, not prompting." It manages all interactions with Large Language Models (LLMs), optimizing for cost and performance. It translates high-level goals into effective, specific prompts for models like Claude and Gemini.
+
+Structural Layer: Model-Centric Protocol (MCP) is used as an architectural pattern. Volatile or specialized components (like scrapers and automation agents) are wrapped in their own services (MCP Tools) to create a modular, maintainable, and robust system.
+
+Integrated Repositories
+Real-Time Assistance & Interview Prep: Cheating Daddy
+
+URL: https://github.com/sohzm/cheating-daddy
+
+Data Ingestion & Job Discovery: linkedin_scraper
+
+URL: https://github.com/joeyism/linkedin_scraper
+
+Resume Generation & Formatting: Reactive-Resume
+
+URL: https://github.com/AmruthPillai/Reactive-Resume
+
+ATS Keyword Matching: Resume-Matcher
+
+URL: https://github.com/srbhr/Resume-Matcher
+
+Automated Application Submission: Jobs_Applier_AI_Agent_AIHawk
+
+URL: https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk
+
+System Documentation & Visualization: opendia
+
+URL: https://github.com/aaronjmars/opendia
+
+End-to-End Application Flow
+Stage 1: Onboarding and Profile Building
+
+The linkedin_scraper is used to "pre-fill" a user's professional data from their LinkedIn profile.
+
+A DSPy module (ParseLinkedInProfile) cleans, structures, and refines this raw data.
+
+The output populates the central "Experience Journal", a database that serves as the user's single source of truth for their skills, accomplishments, and work history.
+
+Stage 2: Job Discovery and Analysis
+
+The linkedin_scraper (as an MCP tool) finds job postings based on user criteria.
+
+Each job is analyzed by two parallel systems:
+
+The Resume-Matcher (as an MCP tool) provides a quantitative ATS Keyword Score, simulating how a traditional applicant tracking system would see the resume.
+
+A DSPy module (JobFitAssessor) provides a qualitative Gom-Jobbar Fit Score, analyzing the role for true alignment and identifying strategic keyword gaps.
+
+The user is presented with a prioritized list of opportunities, complete with both scores and actionable advice.
+
+Stage 3: Resume Generation
+
+When a user targets a job, a DSPy module (GenerateTargetedResume) takes the user's full "Experience Journal" and the specific job analysis as input.
+
+It generates a perfectly formatted JSON object for a new resume, intelligently rewriting bullet points and prioritizing skills to match the job description.
+
+This JSON is sent to a self-hosted instance of Reactive-Resume, which instantly creates a polished, hyper-targeted resume PDF for the user.
+
+Stage 4: Automated Application
+
+As an optional step, the user can trigger the AIHawk agent (as an MCP tool) to "Auto-Apply."
+
+The agent uses the newly generated resume to fill out the application form.
+
+When it encounters custom questions (e.g., "Why do you want to work here?"), it calls a dedicated DSPy module (ApplicationQuestionAnswerer) to generate a thoughtful, context-aware answer in real time.
+
+Stage 5: Interview Preparation
+
+When the user gets an interview, they use the "Interview Co-Pilot" (our enhanced fork of the cheating-daddy application).
+
+Pre-loaded with the job description and the submitted resume, a DSPy module provides real-time talking points and STAR-method suggestions based on the interviewer's questions.
+
+Internal Tooling:
+
+The opendia library is used internally to programmatically generate and maintain system architecture diagrams, ensuring the project is well-documented and easy for the development team to understand.
