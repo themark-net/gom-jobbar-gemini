@@ -3,33 +3,27 @@ import os
 import requests
 import json
 
-# We only need the profile we want to scrape now.
-# This can be set from an environment variable for good practice.
-PROFILE_TO_SCRAPE = os.getenv("PROFILE_TO_SCRAPE")
-# Add a check to ensure the variable was actually found
-if not PROFILE_TO_SCRAPE:
-    raise ValueError("ERROR: The PROFILE_TO_SCRAPE environment variable is not set. Please define it before running.")
+# The profile to scrape can be set via environment variable.
+PROFILE_TO_SCRAPE = os.getenv("PROFILE_TO_SCRAPE", "https://www.linkedin.com/in/williamhgates/")
 
-# Configuration (remains the same)
+# --- Configuration (remains the same) ---
 anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
 if not anthropic_api_key:
     raise ValueError("ANTHROPIC_API_KEY environment variable not found.")
 llm = dspy.LM("anthropic/claude-3-haiku-20240307", api_key=anthropic_api_key)
 dspy.configure(lm=llm)
 
-
-# --- Call our new Authenticated Scraper Tool ---
-print("--- Step 1: Calling the Authenticated LinkedIn Scraper Tool ---")
+# --- Call our Interactive Scraper Tool ---
+print("--- Calling the Interactive LinkedIn Scraper Tool ---")
 
 try:
-    # The payload is now much simpler
     scraper_payload = {"linkedin_url": PROFILE_TO_SCRAPE}
-    print("Sending request to MCP Server... (A browser window should open)")
+    print("Sending request to MCP Server... (A browser window may open for login)")
     response = requests.post("http://127.0.0.1:8000/tools/scrape_linkedin", json=scraper_payload, timeout=300)
     response.raise_for_status()
     scraped_data = response.json()
     
-    print("Successfully received REAL profile data from MCP Server:")
+    print("\nSuccessfully received profile data from MCP Server:")
     print(json.dumps(scraped_data, indent=2))
 
 except requests.exceptions.RequestException as e:
@@ -37,8 +31,7 @@ except requests.exceptions.RequestException as e:
     print(f"Error details: {e}\n")
     exit()
 
-
-# --- Step 2: Processing the REAL Scraped Data with DSPy ---
+# --- Step 2: Processing the Scraped Data with DSPy ---
 print("\n--- Step 2: Processing Scraped Experience with DSPy ---")
 
 class ProcessExperience(dspy.Signature):

@@ -1,0 +1,22 @@
+[2131335:2131335:0711/041750.721833:WARNING:chrome/browser/signin/account_consistency_mode_manager.cc:73] Desktop Identity Consistency cannot be enabled as no OAuth client ID and client secret have been configured.
+[2131455:2131455:0711/041750.844129:WARNING:sandbox/policy/linux/sandbox_linux.cc:415] InitializeSandbox() called with multiple threads in process gpu-process.
+[2131335:2131335:0711/041757.661218:INFO:CONSOLE:2] "Error", source: https://client.protechts.net/PXdOjV695v/main.min.js (2)
+[2131455:2131455:0711/041800.825626:ERROR:ui/gl/gl_surface_presentation_helper.cc:260] GetVSyncParametersIfAvailable() failed for 1 times!
+[2131455:2131455:0711/041803.323091:ERROR:ui/gl/gl_surface_presentation_helper.cc:260] GetVSyncParametersIfAvailable() failed for 2 times!
+[2131455:2131455:0711/041803.334727:ERROR:ui/gl/gl_surface_presentation_helper.cc:260] GetVSyncParametersIfAvailable() failed for 3 times!
+[2131555:29:0711/041803.633423:INFO:third_party/blink/renderer/modules/peerconnection/peer_connection_dependency_factory.cc:802] Running WebRTC with a combined Network and Worker thread.
+[2131494:2131518:0711/041803.642182:WARNING:net/dns/host_resolver_dns_task.cc:938] Address list empty after RFC3484 sort
+[2131494:2131518:0711/041803.758970:INFO:services/network/p2p/socket_udp.cc:474] sendto() has failed twice returning a  transient error net::ERR_ADDRESS_UNREACHABLE. Dropping the packet.
+[2131335:2131335:0711/041803.761642:WARNING:chrome/browser/media/prefs/capture_device_ranking.h:255] Can't initialize the value of media.audio_input.user_preference_ranking because media.default_audio_capture_device isn't registered or is empty
+[2131335:2131335:0711/041803.761694:WARNING:chrome/browser/media/prefs/capture_device_ranking.h:255] Can't initialize the value of media.video_input.user_preference_ranking because media.default_video_capture_Device isn't registered or is empty
+[2131335:2131335:0711/041807.317692:INFO:CONSOLE:2] "Error", source: https://client.protechts.net/PXdOjV695v/main.min.js (2)
+[2131555:29:0711/041812.147338:INFO:third_party/blink/renderer/modules/peerconnection/peer_connection_dependency_factory.cc:802] Running WebRTC with a combined Network and Worker thread.
+[2131494:2131518:0711/041812.155272:INFO:services/network/p2p/socket_udp.cc:474] sendto() has failed twice returning a  transient error net::ERR_ADDRESS_UNREACHABLE. Dropping the packet.
+[2131335:2131335:0711/041812.269316:WARNING:chrome/browser/media/prefs/capture_device_ranking.h:255] Can't initialize the value of media.audio_input.user_preference_ranking because media.default_audio_capture_device isn't registered or is empty
+[2131335:2131335:0711/041812.269376:WARNING:chrome/browser/media/prefs/capture_device_ranking.h:255] Can't initialize the value of media.video_input.user_preference_ranking because media.default_video_capture_Device isn't registered or is empty
+[2131494:2131518:0711/041812.408172:INFO:services/network/p2p/socket_udp.cc:474] sendto() has failed twice returning a  transient error net::ERR_ADDRESS_UNREACHABLE. Dropping the packet.
+[2131494:2131518:0711/041812.924094:INFO:services/network/p2p/socket_udp.cc:474] sendto() has failed twice returning a  transient error net::ERR_ADDRESS_UNREACHABLE. Dropping the packet.
+[2131494:2131518:0711/041813.939508:INFO:services/network/p2p/socket_udp.cc:474] sendto() has failed twice returning a  transient error net::ERR_ADDRESS_UNREACHABLE. Dropping the packet.
+[2131494:2131518:0711/041815.955014:INFO:services/network/p2p/socket_udp.cc:474] sendto() has failed twice returning a  transient error net::ERR_ADDRESS_UNREACHABLE. Dropping the packet.
+[2131494:2131516:0711/041815.994579:WARNING:net/extras/sqlite/sqlite_persistent_store_backend_base.cc:176] Failed to post task from FlushAndNotifyInBackground@net/extras/sqlite/sqlite_persistent_store_backend_base.cc:226 to client_task_runner_.
+[2131494:2131516:0711/041815.994637:WARNING:net/extras/sqlite/sqlite_persistent_store_backend_base.cc:176] Failed to post task from FlushAndNotifyInBackground@net/extras/sqlite/sqlite_persistent_store_backend_base.cc:226 to client_task_runner_.
