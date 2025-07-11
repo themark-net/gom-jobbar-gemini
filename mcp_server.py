@@ -1,14 +1,16 @@
 from fastapi import FastAPI
 import time
+import os  # Import the os library
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-# CORRECTED IMPORT: We are importing the class named 'Service'
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
-# --- IMPORTANT: PASTE YOUR CHROME PROFILE PATH HERE ---
-#CHROME_PROFILE_PATH = "$HOME/snap/chromium/common/chromium/Default"
-CHROME_PROFILE_PATH = "/home/mark/snap/chromium/common/chromium/Default"
+# --- CORRECTED PATH HANDLING ---
+# Use os.path.expanduser to correctly resolve the home directory path.
+# We point to the parent directory of "Default".
+chrome_user_data_dir = os.path.expanduser("~/snap/chromium/common/chromium")
+
 app = FastAPI(title="Gom-Jobbar MCP Server")
 
 def get_profile_data(driver, profile_url):
@@ -41,18 +43,22 @@ def get_profile_data(driver, profile_url):
 @app.post("/tools/scrape_linkedin")
 def scrape_linkedin_profile_real(payload: dict):
     """
-    REAL SCRAPER v2: Uses an existing Chrome profile to bypass login/MFA.
+    REAL SCRAPER v3: Correctly uses the user's existing Chrome profile.
     """
     profile_url = payload.get("linkedin_url")
     if not profile_url:
         return {"error": "Missing profile_url in payload."}
 
-    print("Initializing WebDriver with existing user profile...")
+    print(f"Initializing WebDriver with user data dir: {chrome_user_data_dir}")
     options = ChromeOptions()
-    options.add_argument(f"--user-data-dir={CHROME_PROFILE_PATH}")
-    options.add_argument("--profile-directory=Default") 
+    # Tell Selenium where to find all the user profiles
+    options.add_argument(f"--user-data-dir={chrome_user_data_dir}")
+    # Tell Selenium which specific profile to use
+    options.add_argument("--profile-directory=Default")
+
+    # This is a flag from your chrome://version page that might help
+    options.add_argument("--password-store=basic") 
     
-    # CORRECTED USAGE: We now use 'Service' directly.
     service = Service(executable_path='./chromedriver')
     driver = webdriver.Chrome(service=service, options=options)
 
