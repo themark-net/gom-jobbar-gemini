@@ -1,2 +1,3 @@
-2025/07/11-04:14:12.342 20836f Creating DB /media/mark/data/gom-jobbar-gemini/linkedin_session_profile/Default/Site Characteristics Database since it was missing.
-2025/07/11-04:14:12.356 20836f Reusing MANIFEST /media/mark/data/gom-jobbar-gemini/linkedin_session_profile/Default/Site Characteristics Database/MANIFEST-000001
+2025/07/11-04:17:50.732 2085e0 Reusing MANIFEST /media/mark/data/gom-jobbar-gemini/linkedin_session_profile/Default/Site Characteristics Database/MANIFEST-000001
+2025/07/11-04:17:50.732 2085e0 Recovering log #3
+2025/07/11-04:17:50.732 2085e0 Reusing old log /media/mark/data/gom-jobbar-gemini/linkedin_session_profile/Default/Site Characteristics Database/000003.log 
